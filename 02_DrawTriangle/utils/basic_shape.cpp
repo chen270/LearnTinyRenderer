@@ -1,4 +1,16 @@
 #include "basic_shape.h"
+#include <random>
+
+namespace TinyColor
+{
+    const TGAColor RandColor()
+    {
+        static std::random_device rd;
+        static std::mt19937 rng(rd());
+        static std::uniform_int_distribution<int> dist(0, 255);
+        return TGAColor(dist(rng), dist(rng), dist(rng), 255);
+    }
+}
 
 void Line::draw_line(int x0, int y0, int x1, int y1, TGAImage &image, TGAColor color)
 {

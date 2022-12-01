@@ -4,9 +4,14 @@
 #include "geometry.h"
 #include "tgaimage.h"
 
-const TGAColor red = TGAColor(255, 0, 0, 255);
-const TGAColor white = TGAColor(255, 255, 255, 255);
-const TGAColor green = TGAColor(0, 255, 0, 255);
+namespace TinyColor
+{
+    const TGAColor red = TGAColor(255, 0, 0, 255);
+    const TGAColor white = TGAColor(255, 255, 255, 255);
+    const TGAColor green = TGAColor(0, 255, 0, 255);
+    const TGAColor RandColor();
+};
+
 
 class Line
 {
@@ -23,7 +28,7 @@ class Triangle
 {
 public:
     Triangle(/* args */) = delete;
-    Triangle(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage &image, TGAColor color) { triangle_barycenter(t0, t1, t2, image, color); };
+    Triangle(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage &image, TGAColor color) { triangle_crossProduct(t0, t1, t2, image, color); };
     ~Triangle() = default;
 
 private:
