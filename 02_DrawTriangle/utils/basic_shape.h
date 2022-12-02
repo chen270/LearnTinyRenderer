@@ -28,8 +28,10 @@ class Triangle
 {
 public:
     Triangle(/* args */) = delete;
-    Triangle(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage &image, TGAColor color) { triangle_crossProduct(t0, t1, t2, image, color); };
+    Triangle(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage &image, TGAColor color) { triangle_barycenter(t0, t1, t2, image, color); };
     ~Triangle() = default;
+
+    Triangle(Vec2i* pts, TGAImage& image, TGAColor color);
 
 private:
     void triangle_scan(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage &image, TGAColor color);
