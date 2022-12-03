@@ -133,41 +133,20 @@ void Triangle::triangle_crossProduct(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage &ima
     }
 }
 
+// 利用重心坐标判断点是否在三角形内部
 static Vec3f barycentric(Vec2i* pts, Vec2i P)
 {
     Vec3i a = Vec3i(pts[1].x - pts[0].x, pts[2].x - pts[0].x, pts[0].x - P.x);
     Vec3i b = Vec3i(pts[1].y - pts[0].y, pts[2].y - pts[0].y, pts[0].y - P.y);
-    Vec3i u = a ^ b;
+    Vec3i u = a ^ b; // u 向量和 x y 向量的点积为 0，所以 x y 向量叉乘可以得到 u 向量
 
-#if 1
     if (std::abs(u.z) <= 0.01)
         return Vec3f(-1, 1, 1); // 三点共线时，此时返回(-1,1,1)
+
     float xU = u.x / (float)u.z;
     float xV = u.y / (float)u.z;
-    return Vec3f(1.0f - xU - xV, xU, xV);
-    //return Vec3f(1.f - (xU + xV), xU, xV);
-#else
-    if (std::abs(u.z) < 1) {
-        return Vec3f(-1, 1, 1);
-    }
-    return Vec3f(1.f - (u.x + u.y) / (float)u.z, u.x / (float)u.z, u.y / (float)u.z);
-#endif
-}
-
-// 利用重心坐标判断点是否在三角形内部
-static Vec3f barycentric2(Vec2i* pts, Vec2i P) {
-    Vec3i x(pts[1].x - pts[0].x, pts[2].x - pts[0].x, pts[0].x - P.x);
-    Vec3i y(pts[1].y - pts[0].y, pts[2].y - pts[0].y, pts[0].y - P.y);
-
-    // u 向量和 x y 向量的点积为 0，所以 x y 向量叉乘可以得到 u 向量
-    Vec3i u = x ^ y;
-
-    // 由于 A, B, C, P 的坐标都是 int 类型，所以 u.z 必定是 int 类型，取值范围为 ..., -2, -1, 0, 1, 2, ...
-    // 所以 u.z 绝对值小于 1 意味着三角形退化了，需要舍弃
-    if (std::abs(u.z) < 1) {
-        return Vec3f(-1, 1, 1);
-    }
-    return Vec3f(1.f - (u.x + u.y) / (float)u.z, u.x / (float)u.z, u.y / (float)u.z);
+    float xW = (u.z - u.x - u.y) / (float)u.z;
+    return Vec3f(xW, xU, xV);
 }
 
 void Triangle::triangle_barycenter(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage &image, TGAColor color)
@@ -190,43 +169,9 @@ void Triangle::triangle_barycenter(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage &image
         {
             Vec3f bc_screen = barycentric(pts, { x,y });
 
-            // bc_screen 某个分量小于 0 则表示此点在三角形外（认为边也是三角形的一部分）
-            if (bc_screen.x < 0 || bc_screen.y < 0 || bc_screen.z < 0) {
-                continue;
-            }
-            //if (bc_screen.x >= 0 && bc_screen.x < 1 && bc_screen.y >= 0 && bc_screen.y <= 1 && bc_screen.z >= 0 && bc_screen.z < 1)
+            // 此点在三角形内（认为边也是三角形的一部分）
+            if (bc_screen.x >= 0 && bc_screen.x <= 1 && bc_screen.y >= 0 && bc_screen.y <= 1 && bc_screen.z >= 0 && bc_screen.z <= 1)
                 image.set(x, y, color);
-        }
-    }
-}
-
-
-
-// 自己实现的三角形光栅化函数
-// 主要思路是遍历 Box 中的每一个像素，和三角形的三个点做叉乘，如果叉乘均为正，着色；有一个负数，不着色
-Triangle::Triangle(Vec2i* pts, TGAImage& image, TGAColor color)
-{
-    // 步骤 1: 找出包围盒
-        // 拿到 AABB 包围盒
-    int x_min = std::min(std::min(pts[0].x, pts[1].x), pts[2].x);
-    int y_min = std::min(std::min(pts[0].y, pts[1].y), pts[2].y);
-    int x_max = std::max(std::max(pts[0].x, pts[1].x), pts[2].x);
-    int y_max = std::max(std::max(pts[0].y, pts[1].y), pts[2].y);
-
-    // 步骤 2: 包围盒内的每一个像素和三角形顶点连线做叉乘
-    Vec2i P;
-    for (P.x = x_min; P.x <= x_max; P.x++) {
-        for (P.y = y_min; P.y <= y_max; P.y++) {
-
-            // Vec3i bc_screen  = crossProduct(pts, P);
-            Vec3f bc_screen = barycentric(pts, P);
-
-            // bc_screen 某个分量小于 0 则表示此点在三角形外（认为边也是三角形的一部分）
-            if (bc_screen.x < 0 || bc_screen.y < 0 || bc_screen.z < 0) {
-                continue;
-            }
-
-            image.set(P.x, P.y, color);
         }
     }
 }
