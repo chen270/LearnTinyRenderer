@@ -32,7 +32,6 @@ public:
     Triangle(Vec2i* pts2i,Vec3f* pts3f, TGAImage &image, TGAColor color) { triangle_barycenter(pts2i, pts3f, image, color); };
     ~Triangle() = default;
 
-    Triangle(Vec2i* pts, TGAImage& image, TGAColor color);
 
 private:
     void triangle_scan(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage &image, TGAColor color);

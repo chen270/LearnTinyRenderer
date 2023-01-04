@@ -209,49 +209,7 @@ void Triangle::triangle_barycenter(Vec2i* pts2i, Vec3f* pts3f, TGAImage& image, 
             if (bc_screen.x < 0 || bc_screen.y < 0 || bc_screen.z < 0)
                 continue;
 
-            int zb = pts3f[0].z * bc_screen.x + pts3f[1].z * bc_screen.y + pts3f[2].z * bc_screen.z;
-            if (zbuffer[x][y] < zb) {
-                zbuffer[x][y] = zb;
-                image.set(x, y, color);
-            }
-        }
-    }
-}
-
-void Triangle::triangle_barycenter(Vec3f* pts3f, TGAImage& image, TGAColor color)
-{
-    Vec2i pts2i[3];
-    for (int i = 0; i < 3; ++i)
-    {
-        pts2i[i] = (pts3f.x + 1.) * width / 2.;
-    }
-    Vec2i t0 = pts2i[0];
-    Vec2i t1 = pts2i[1];
-    Vec2i t2 = pts2i[2];
-
-    // 共线，三角形面积为0
-    if ((t0.y == t1.y && t0.y == t2.y) || (t0.x == t1.x && t0.x == t2.x))
-        return;
-
-    // 拿到 AABB 包围盒
-    int x_min = std::min(std::min(t0.x, t1.x), t2.x);
-    int y_min = std::min(std::min(t0.y, t1.y), t2.y);
-    int x_max = std::max(std::max(t0.x, t1.x), t2.x);
-    int y_max = std::max(std::max(t0.y, t1.y), t2.y);
-
-
-    Vec2i pts[3] = { t0,t1,t2 };
-    for (int x = x_min; x <= x_max; ++x)
-    {
-        for (int y = y_min; y <= y_max; ++y)
-        {
-            Vec3f bc_screen = barycentric(pts, { x,y });
-
-            // 此点在三角形内（认为边也是三角形的一部分）
-            if (bc_screen.x < 0 || bc_screen.y < 0 || bc_screen.z < 0)
-                continue;
-
-            int zb = pts3f[0].z * bc_screen.x + pts3f[1].z * bc_screen.y + pts3f[2].z * bc_screen.z;
+            float zb = pts3f[0].z * bc_screen.x + pts3f[1].z * bc_screen.y + pts3f[2].z * bc_screen.z;
             if (zbuffer[x][y] < zb) {
                 zbuffer[x][y] = zb;
                 image.set(x, y, color);
