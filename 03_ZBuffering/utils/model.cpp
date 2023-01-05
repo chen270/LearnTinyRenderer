@@ -28,14 +28,26 @@ Model::Model(const char *filename) : verts_(), faces_()
         else if (!line.compare(0, 2, "f "))
         {
             std::vector<int> f;
-            int itrash, idx;
+            std::vector<int> vt;
+            int f_vt, itrash, idx;
             iss >> trash;
-            while (iss >> idx >> trash >> itrash >> trash >> itrash)
+            while (iss >> idx >> trash >> f_vt >> trash >> itrash)
             {
                 idx--; // in wavefront obj all indices start at 1, not zero
                 f.push_back(idx);
+                vt.push_back(f_vt - 1);
             }
             faces_.push_back(f);
+            f_vt_.push_back(vt);
+        }
+        else if (!line.compare(0, 2, "vt"))
+        {
+            char trash2;
+            iss >> trash >> trash2;
+            Vec2f vt;
+            for (int i = 0; i < 2; i++)
+                iss >> vt.raw[i];
+            uv_.push_back(vt);
         }
     }
     std::cerr << "# v# " << verts_.size() << " f# " << faces_.size() << std::endl;
@@ -63,4 +75,14 @@ std::vector<int> Model::face(int idx)
 Vec3f Model::vert(int i)
 {
     return verts_[i];
+}
+
+std::vector<int> Model::face_uv(int idx)
+{
+    return f_vt_[idx];
+}
+
+Vec2f Model::uv_vert(int i)
+{
+    return uv_[i];
 }
