@@ -49,6 +49,12 @@ Model::Model(const char *filename) : verts_(), faces_()
                 iss >> vt.raw[i];
             uv_.push_back(vt);
         }
+        else if (!line.compare(0, 3, "vn ")) {
+            iss >> trash >> trash;
+            Vec3f normal;
+            for (int i = 0; i < 3; i++) iss >> normal.raw[i];
+            norms_.push_back(normal);
+        }
     }
     std::cerr << "# v# " << verts_.size() << " f# " << faces_.size() << std::endl;
 }

@@ -30,7 +30,10 @@ public:
     Triangle(/* args */) = delete;
     Triangle(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage &image, TGAColor color) { triangle_barycenter(t0, t1, t2, image, color); };
     Triangle(Vec2i* pts2i,Vec3f* pts3f, TGAImage &image, TGAColor color) { triangle_barycenter(pts2i, pts3f, image, color); };
-    Triangle(Vec2i* pts2i,Vec3f* pts3f, TGAImage &image, TGAColor* colors) { triangle_barycenter(pts2i, pts3f, image, colors); };
+    Triangle(Vec2i* pts2i, Vec3f* pts3f, TGAImage& image, TGAColor* colors) { triangle_barycenter(pts2i, pts3f, image, colors); };
+    Triangle(const TGAImage& img, Vec2i* pts2i, Vec3f* pts3f, TGAImage& image, Vec2i* uvs) { triangle_barycenter(img, pts2i, pts3f, image, uvs); };
+
+    Triangle(const TGAImage& model, Vec3f* pts, Vec2i* uvs, TGAImage& image, float intensity);
     ~Triangle() = default;
 
 
@@ -40,6 +43,7 @@ private:
     void triangle_barycenter(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage &image, TGAColor color);
     void triangle_barycenter(Vec2i* pts2i, Vec3f* pts3f, TGAImage& image, TGAColor color);
     void triangle_barycenter(Vec2i* pts2i, Vec3f* pts3f, TGAImage& image, TGAColor* colors);
+    void triangle_barycenter(const TGAImage& img, Vec2i* pts2i, Vec3f* pts3f, TGAImage& image, Vec2i* uvs);
 };
 
 #endif // __BASIC_SHAPE_H__

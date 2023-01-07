@@ -11,7 +11,7 @@ private:
 
     std::vector<Vec2f> uv_;
     std::vector<std::vector<int>> f_vt_;
-
+	std::vector<Vec3f> norms_;
 public:
 	Model(const char *filename);
 	~Model();
