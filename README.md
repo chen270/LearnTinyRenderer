@@ -12,4 +12,6 @@ https://supercodepower.com/docs/toy-renderer/
 
 从零构建光栅器，tinyrenderer笔记（下）: https://zhuanlan.zhihu.com/p/400791821
 
+[TinyRenderer从零实现（四）：lesson 3 z-buffer实现与纹理映射](https://zhuanlan.zhihu.com/p/523503467)
+
 
